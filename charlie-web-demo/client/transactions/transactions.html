@@ -8,4 +8,9 @@
              placeholder="Search"/>
       <span class="glyphicon glyphicon-search form-control-feedback"></span>
   </div>
+
+{{#each response.transactions}}
+  {{> transaction}}
+{{/each}}
+
 </template>

@@ -1,5 +1,9 @@
 import { Meteor } from 'meteor/meteor';
 
+import './proxy.js';
+
 Meteor.startup(() => {
-  // code to run on server at startup
+  console.log('Starting Charlie Transactions')
 });
+
+
