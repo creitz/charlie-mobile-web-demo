@@ -9,8 +9,10 @@
       <span class="glyphicon glyphicon-search form-control-feedback"></span>
   </div>
 
-{{#each response.transactions}}
+{{#each data.transactions}}
   {{> transaction}}
+{{else}}
+  Loading...
 {{/each}}
 
 </template>
