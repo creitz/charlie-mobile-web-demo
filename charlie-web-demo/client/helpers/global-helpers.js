@@ -12,3 +12,12 @@ Template.registerHelper('formatMoney', function(amount) {
     return "$" + amount.toFixed(NUM_DECIMALS);
   }
 });
+
+Template.registerHelper('formatDate', function(dateStr) {
+
+  if (dateStr == null) {
+    return '';
+  }
+
+  return new Date(dateStr).toDateString().slice(0, -5);
+});

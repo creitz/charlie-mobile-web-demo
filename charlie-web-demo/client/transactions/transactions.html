@@ -14,7 +14,7 @@
       <table>
         {{#each data.transactionDates}}
           <tr class="transaction-date">
-            <td colspan="3">{{this}}
+            <td colspan="3">{{formatDate this}}
               <label>{{formatMoney (sumForDate this)}}</label>
             </td>
           </tr>
