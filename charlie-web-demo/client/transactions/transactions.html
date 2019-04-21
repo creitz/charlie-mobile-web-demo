@@ -1,18 +1,24 @@
 
 <template name="transactions">
-  <h3>Transactions</h3>
-  <div class="form-group has-feedback">
+  <h1 class="transactions-header">Transactions</h1>
+  <div class="form-group has-feedback transaction-input">
       <input type="text"
              class="form-control"
-             id=""
+             id="transaction-search"
              placeholder="Search"/>
       <span class="glyphicon glyphicon-search form-control-feedback"></span>
   </div>
 
-{{#each data.transactions}}
-  {{> transaction}}
-{{else}}
-  Loading...
-{{/each}}
+  <div class="transactions">
+    {{#if data.transactions}}
+      <table>
+        {{#each data.transactions}}
+          {{> transaction}}
+        {{/each}}
+      </table>
+    {{else}}
+      Loading...
+    {{/if}}
+  </div>
 
 </template>
