@@ -1,34 +1,39 @@
 
 <template name="transactions">
-  <h1 class="transactions-header">Transactions</h1>
-  <div class="form-group has-feedback transaction-input">
-      <input type="text"
-             class="form-control"
-             id="transaction-search"
-             placeholder="Search"/>
-      <span class="glyphicon glyphicon-search form-control-feedback"></span>
-  </div>
-
-  <div class="transactions">
-    {{#if data}}
-      <table>
-        {{#each data.transactionDates}}
-          <tr class="transaction-date">
-            <td colspan="3">{{formatDate this}}
-              <label>{{formatMoney (sumForDate this)}}</label>
-            </td>
-          </tr>
-          {{#each transactionsForDate this}}
-            {{> transaction}}
-          {{else}}
-            {{> noresults}}
-          {{/each}}
-        {{/each}}
-      </table>
+    {{#with selectedTransaction}}
+      {{> transactionDetails}}
     {{else}}
-      Loading...
-    {{/if}}
-  </div>
+      <h1 class="transactions-header">Transactions</h1>
+      <div class="form-group has-feedback transaction-input">
+          <input type="text"
+                class="form-control"
+                id="transaction-search"
+                placeholder="Search"
+                value="{{searchText}}"/>
+          <span class="glyphicon glyphicon-search form-control-feedback"></span>
+      </div>
+
+      <div class="transactions">
+        {{#if data}}
+          <table>
+            {{#each data.transactionDates}}
+              <tr class="transaction-date">
+                <td colspan="3">{{formatDate this}}
+                  <label>{{formatMoney (sumForDate this)}}</label>
+                </td>
+              </tr>
+              {{#each transactionsForDate this}}
+                {{> transaction}}
+              {{else}}
+                {{> noresults}}
+              {{/each}}
+            {{/each}}
+          </table>
+        {{else}}
+          Loading...
+        {{/if}}
+      </div>
+    {{/with}}
 
 </template>
 

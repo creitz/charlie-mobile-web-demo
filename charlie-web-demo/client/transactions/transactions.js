@@ -7,9 +7,12 @@ const DUMMY_USER_ID = "9999";
 var load;
 var searchDelayTimer;
 var lastSearch;
+var selectedTransaction = new ReactiveVar();
+var searchText = new ReactiveVar("");
 
-function _load(searchString) {
+function _load() {
   
+  var searchString = searchText.get();
   if (lastSearch === searchString) {
     return;
   }
@@ -27,13 +30,17 @@ function _load(searchString) {
 Template.transactions.onCreated(function onCreated() {
   this.responseData = new ReactiveVar(0);
   load = _load.bind(this);
-  load('');
+  load();
 });
 
 Template.transactions.helpers({
 
   data: function() {
     return Template.instance().responseData.get();
+  },
+
+  searchText: function() {
+    return searchText.get();
   },
 
   transactionsForDate: function(date) {
@@ -48,6 +55,10 @@ Template.transactions.helpers({
       sum += txn.amount;
     });
     return sum;
+  },
+
+  selectedTransaction: function() {
+    return selectedTransaction.get();
   }
 });
 
@@ -68,12 +79,23 @@ Template.transaction.events({
 
   'click .transaction': function(event) {
     event.preventDefault();
-    //alert(this.id)
+    event.stopImmediatePropagation();
+    selectedTransaction.set(this);
   },
 
   'click .name a': function(event) {
     event.preventDefault();
-    $('#transaction-search').val(this.name);
-    load(this.name);
+    event.stopImmediatePropagation();
+    searchText.set(this.name);
+    load();
   }
 });
+
+Template.transactionDetails.events({
+
+  'click #back': function() {
+    $('#transaction-search').val(this.lastSearch);
+    selectedTransaction.set(undefined);
+  }
+
+})
