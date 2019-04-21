@@ -6,9 +6,15 @@ const DUMMY_USER_ID = "9999";
 
 var load;
 var searchDelayTimer;
+var lastSearch;
 
 function _load(searchString) {
   
+  if (lastSearch === searchString) {
+    return;
+  }
+  
+  lastSearch = searchString;
   var self = this;
   var params = {"search_string" : searchString || ""};
   TransactionService.getTransactions(DUMMY_USER_ID, params).then(function(data) {
@@ -21,7 +27,7 @@ function _load(searchString) {
 Template.transactions.onCreated(function onCreated() {
   this.responseData = new ReactiveVar(0);
   load = _load.bind(this);
-  load();
+  load('');
 });
 
 Template.transactions.helpers({
@@ -42,4 +48,18 @@ Template.transactions.events({
     }, 350);
   }
 
+});
+
+Template.transaction.events({
+
+  'click .transaction': function(event) {
+    event.preventDefault();
+    //alert(this.id)
+  },
+
+  'click .name a': function(event) {
+    event.preventDefault();
+    $('#transaction-search').val(this.name);
+    load(this.name);
+  }
 });
