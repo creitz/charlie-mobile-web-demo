@@ -12,10 +12,17 @@
   <div class="transactions">
     {{#if data}}
       <table>
-        {{#each data.transactions}}
-          {{> transaction}}
-        {{else}}
-          {{> noresults}}
+        {{#each data.transactionDates}}
+          <tr class="transaction-date">
+            <td colspan="3">{{this}}
+              <label>{{formatMoney (sumForDate this)}}</label>
+            </td>
+          </tr>
+          {{#each transactionsForDate this}}
+            {{> transaction}}
+          {{else}}
+            {{> noresults}}
+          {{/each}}
         {{/each}}
       </table>
     {{else}}

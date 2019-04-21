@@ -8,6 +8,25 @@ var load;
 var searchDelayTimer;
 var lastSearch;
 
+function organizeTxnsByDate(data) {
+
+  var dateMap = {};
+
+  data.transactionDates = [];
+  data.transactions.forEach(function(txn) {
+    
+    var txnsForDate = dateMap[txn.date];
+    if (!txnsForDate) {
+      txnsForDate = [];
+      dateMap[txn.date] = txnsForDate;
+      data.transactionDates.push(txn.date);
+    }
+    txnsForDate.push(txn);
+  });
+
+  data.dateMap = dateMap;
+}
+
 function _load(searchString) {
   
   if (lastSearch === searchString) {
@@ -18,6 +37,7 @@ function _load(searchString) {
   var self = this;
   var params = {"search_string" : searchString || ""};
   TransactionService.getTransactions(DUMMY_USER_ID, params).then(function(data) {
+    organizeTxnsByDate(data);
     self.responseData.set(data);
   }).catch(function(error) {
     alert(error);
@@ -34,6 +54,20 @@ Template.transactions.helpers({
 
   data() {
     return Template.instance().responseData.get();
+  },
+
+  transactionsForDate(date) {
+    var data = Template.instance().responseData.get();
+    return data.dateMap[date];
+  },
+
+  sumForDate(date) {
+    var data = Template.instance().responseData.get();
+    var sum = 0;
+    data.dateMap[date].forEach(function(txn) {
+      sum += txn.amount;
+    });
+    return sum;
   }
 });
 
