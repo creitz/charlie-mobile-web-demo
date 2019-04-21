@@ -52,16 +52,16 @@ Template.transactions.onCreated(function onCreated() {
 
 Template.transactions.helpers({
 
-  data() {
+  data: function() {
     return Template.instance().responseData.get();
   },
 
-  transactionsForDate(date) {
+  transactionsForDate: function(date) {
     var data = Template.instance().responseData.get();
     return data.dateMap[date];
   },
 
-  sumForDate(date) {
+  sumForDate: function(date) {
     var data = Template.instance().responseData.get();
     var sum = 0;
     data.dateMap[date].forEach(function(txn) {
