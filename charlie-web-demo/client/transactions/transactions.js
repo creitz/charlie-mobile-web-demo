@@ -1,6 +1,8 @@
 import { Template } from 'meteor/templating';
 import { ReactiveVar } from 'meteor/reactive-var';
 import { TransactionService } from '../services/transaction-service.js';
+import { ScrollManager } from '../util/scroll-manager.js';
+import { Utils } from '../util/utils.js';
 
 const DUMMY_USER_ID = "9999";
 
@@ -9,18 +11,45 @@ var searchDelayTimer;
 var lastSearch;
 var selectedTransaction = new ReactiveVar();
 var searchText = new ReactiveVar("");
+var scrollManager = new ScrollManager();
+var canLoadMore = new ReactiveVar(true);
+
+function search() {
+  
+  var searchString = searchText.get();
+  if (lastSearch !== searchString) {
+    lastSearch = searchString;
+    scrollManager.reset();
+    load()
+  }
+}
 
 function _load() {
   
   var searchString = searchText.get();
-  if (lastSearch === searchString) {
-    return;
-  }
-  
-  lastSearch = searchString;
   var self = this;
-  var params = {"search_string" : searchString || ""};
-  TransactionService.getTransactions(DUMMY_USER_ID, params).then(function(data) {
+  var page = scrollManager.page;
+  var limit = scrollManager.limit;
+  var params = {
+                "search_string" : searchString || "",
+                "limit"  : limit,
+                "offset" : scrollManager.getOffset()
+                };
+  TransactionService.getTransactions(DUMMY_USER_ID, params).then(function(newData) {
+    var data = self.responseData.get();
+    if (page == 0 || !data || !data.transactions) {
+      data = newData;
+    } else {
+      data.transactions = data.transactions.concat(newData.transactions);
+      data.offset = newData.offset;
+      data.limit = newData.limit;
+    }
+    var hasTransactions = newData.transactions && newData.transactions.length > 0;
+    if (hasTransactions) {
+      scrollManager.advance();
+    }
+    canLoadMore.set(hasTransactions && newData.transactions.length == limit);
+    Utils.organizeTxnsByDate(data);
     self.responseData.set(data);
   }).catch(function(error) {
     alert(error);
@@ -57,6 +86,10 @@ Template.transactions.helpers({
     return sum;
   },
 
+  canLoadMore: function() {
+    return canLoadMore.get();
+  },
+
   selectedTransaction: function() {
     return selectedTransaction.get();
   }
@@ -66,11 +99,15 @@ Template.transactions.events({
 
   'keyup #transaction-search': function(event) {
     event.preventDefault();
-    var searchString = $(event.currentTarget).val();
+    searchText.set($(event.currentTarget).val());
     clearTimeout(searchDelayTimer);
     searchDelayTimer = setTimeout(function() {
-      load(searchString);
+      search();
     }, 350);
+  },
+
+  'click #loadMore': function(event) {
+    load();
   }
 
 });
@@ -87,7 +124,7 @@ Template.transaction.events({
     event.preventDefault();
     event.stopImmediatePropagation();
     searchText.set(this.name);
-    load();
+    search();
   }
 });
 

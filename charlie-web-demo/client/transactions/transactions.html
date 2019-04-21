@@ -29,6 +29,11 @@
               {{/each}}
             {{/each}}
           </table>
+          {{#if canLoadMore}}
+            <div class="text-center">
+              <button id="loadMore" class="btn btn-secondary">Load More</button>
+            </div>
+          {{/if}}
         {{else}}
           Loading...
         {{/if}}
