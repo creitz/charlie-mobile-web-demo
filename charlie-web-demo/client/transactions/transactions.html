@@ -29,17 +29,26 @@
               {{/each}}
             {{/each}}
           </table>
-          {{#if canLoadMore}}
-            <div class="text-center">
-              <button id="loadMore" class="btn btn-secondary">Load More</button>
-            </div>
+          {{#if loading}}
+            {{> loadingIndicator}}
+          {{else}}
+            {{#if canLoadMore}}
+              <div class="text-center">
+                <button id="loadMore" class="btn btn-secondary">Load More</button>
+              </div>
+            {{/if}}
           {{/if}}
         {{else}}
-          Loading...
+          {{> loadingIndicator}}
         {{/if}}
       </div>
     {{/with}}
+</template>
 
+<template name="loadingIndicator">
+  <div class="text-center">
+    Loading...
+  </div>
 </template>
 
 <template name="noresults">

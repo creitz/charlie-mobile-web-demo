@@ -11,9 +11,15 @@ export function TransactionLoader() {
   this.scrollManager = new ScrollManager();
   var maybeMore      = new ReactiveVar(true);
   var responseData   = new ReactiveVar(0);
+  var loading        = new ReactiveVar(false);
 
   this.load = function(searchString) {
 
+    if (loading.get()) {
+      return;
+    }
+
+    loading.set(true)
     var self = this;
 
     var page = this.scrollManager.page;
@@ -24,6 +30,7 @@ export function TransactionLoader() {
                   "offset"        : this.scrollManager.getOffset()
                   };
     TransactionService.getTransactions(DUMMY_USER_ID, params).then(function(newData) {
+      loading.set(false);
       var data = responseData.get();
       if (page == 0 || !data || !data.transactions) {
         data = newData;
@@ -40,6 +47,7 @@ export function TransactionLoader() {
       Utils.organizeTxnsByDate(data);
       responseData.set(data);
     }).catch(function(error) {
+      loading.set(false);
       alert(error);
     });
   }
@@ -50,5 +58,9 @@ export function TransactionLoader() {
 
   this.getResponseData = function() {
     return responseData.get();
+  }
+
+  this.isLoading = function() {
+    return loading.get();
   }
 }

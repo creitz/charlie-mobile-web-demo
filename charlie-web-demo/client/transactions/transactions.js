@@ -55,6 +55,10 @@ Template.transactions.helpers({
     return loader.canLoadMore();
   },
 
+  loading: function() {
+    return loader.isLoading();
+  },
+
   selectedTransaction: function() {
     return selectedTransaction.get();
   }
