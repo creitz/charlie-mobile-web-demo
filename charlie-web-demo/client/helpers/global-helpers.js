@@ -1,16 +1,7 @@
-
-const NUM_DECIMALS = 2;
+import { Utils } from "../util/utils";
 
 Template.registerHelper('formatMoney', function(amount) {
-  if (amount == null) {
-    return '';
-  }
-
-  if (amount < 0) {
-    return "-$" + (amount * -1).toFixed(NUM_DECIMALS);
-  } else {
-    return "$" + amount.toFixed(NUM_DECIMALS);
-  }
+  return Utils.formatMoney(amount);
 });
 
 Template.registerHelper('formatDate', function(dateStr) {

@@ -1,3 +1,6 @@
+
+const NUM_DECIMALS = 2;
+
 export let Utils = {
 
   organizeTxnsByDate : function (data) {
@@ -15,5 +18,17 @@ export let Utils = {
       }
       txnsForDate.push(txn);
     });
+  },
+
+  formatMoney : function (amount) {
+    if (amount == null) {
+      return '';
+    }
+  
+    if (amount < 0) {
+      return "-$" + (amount * -1).toFixed(NUM_DECIMALS);
+    } else {
+      return "$" + amount.toFixed(NUM_DECIMALS);
+    }
   }
 }

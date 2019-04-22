@@ -16,6 +16,11 @@
       <div class="transactions">
         {{#if data}}
           <table>
+            <tr class="transaction-date border">
+              <td colspan="3">
+                <label>Total shown: {{summary}}</label>
+              </td>
+            </tr>
             {{#each data.transactionDates}}
               <tr class="transaction-date border">
                 <td colspan="3">{{formatDate this}}

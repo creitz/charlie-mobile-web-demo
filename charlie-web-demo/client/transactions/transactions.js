@@ -1,6 +1,7 @@
 import { Template } from 'meteor/templating';
 import { ReactiveVar } from 'meteor/reactive-var';
 import { TransactionLoader } from '../services/transaction-loader.js';
+import { Utils } from "../util/utils";
 
 var searchDelayTimer;
 var lastSearch;
@@ -20,6 +21,15 @@ function search() {
     loader.scrollManager.reset();
     load()
   }
+}
+
+function sumForDate(date) {
+  var data = loader.getResponseData()
+  var sum = 0;
+  data.dateMap[date].forEach(function(txn) {
+    sum += txn.amount;
+  });
+  return sum;
 }
 
 Template.transactions.onCreated(function onCreated() {
@@ -43,12 +53,18 @@ Template.transactions.helpers({
   },
 
   sumForDate: function(date) {
-    var data = loader.getResponseData()
-    var sum = 0;
-    data.dateMap[date].forEach(function(txn) {
-      sum += txn.amount;
+    return sumForDate(date);
+  },
+
+  summary: function() {
+
+    var data = loader.getResponseData();
+    var total = 0;
+    data.transactionDates.forEach(function(date) {
+      total += sumForDate(date);
     });
-    return sum;
+
+    return Utils.formatMoney(total);
   },
 
   canLoadMore: function() {
