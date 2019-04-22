@@ -7,8 +7,8 @@ var searchDelayTimer;
 var selectedTransaction = new ReactiveVar();
 var selectedCategory    = new ReactiveVar();
 var searchText = new ReactiveVar("");
-var searchMin  = new ReactiveVar(0);
-var searchMax  = new ReactiveVar(0);
+var searchMin  = new ReactiveVar();
+var searchMax  = new ReactiveVar();
 var loader;
 
 function search() {
@@ -17,19 +17,38 @@ function search() {
   load();
 }
 
+function hasVal(val) {
+  return val && val.trim() !== "";
+}
+
+function hasSearchMin() {
+  return hasVal(searchMin.get());
+}
+
+function hasSearchMax() {
+  return hasVal(searchMax.get());
+}
+
 function load() {
   
   var searchString = searchText.get() || "";
-  var min = searchMin.get() || 0;
-  var max = searchMax.get();
 
   var params = {
-    "search_string" : searchString,
-    "amount_min"    : min,
+    "search_string" : searchString
   }
 
-  if (max > 0) {
-    params["amount_max"] = max;
+  if (hasSearchMin()) {
+    var min = parseInt(searchMin.get());
+    if (min != NaN) {
+      params["amount_min"] = min;
+    }
+  }
+
+  if (hasSearchMax()) {
+    var max = parseInt(searchMax.get());
+    if (max != NaN) {
+      params["amount_max"] = max;
+    }
   }
 
   var category = selectedCategory.get();
@@ -108,19 +127,17 @@ Template.transactions.helpers({
   },
 
   searchMin: function() {
-    var min = searchMin.get();
-    return min > 0 ? min : "";
+    return searchMin.get();
   },
 
   searchMax: function() {
-    var max = searchMax.get();
-    return max > 0 ? max : "";
+    return searchMax.get();
   },
 
   collapseFilters: function() {
     return selectedCategory.get() != undefined
-        || searchMin.get() > 0
-        || searchMax.get() > 0
+        || hasSearchMin()
+        || hasSearchMax()
         ? "" : "collapse";
   }
 });
@@ -133,13 +150,13 @@ Template.transactions.events({
     startSearchTimer()
   },
 
-  'keyup #minInput': function(event) {
+  'keyup #minInput, change #minInput': function(event) {
     event.preventDefault();
     searchMin.set($(event.currentTarget).val());
     startSearchTimer()
   },
 
-  'keyup #maxInput': function(event) {
+  'keyup #maxInput, change #maxInput': function(event) {
     event.preventDefault();
     searchMax.set($(event.currentTarget).val());
     startSearchTimer();
