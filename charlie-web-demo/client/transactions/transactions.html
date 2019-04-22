@@ -24,9 +24,9 @@
               </tr>
               {{#each transactionsForDate this}}
                 {{> transaction}}
-              {{else}}
-                {{> noresults}}
               {{/each}}
+            {{else}}
+              {{> noresults}}
             {{/each}}
           </table>
           {{#if loading}}
