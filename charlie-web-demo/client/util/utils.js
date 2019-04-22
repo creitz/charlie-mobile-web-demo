@@ -30,5 +30,21 @@ export let Utils = {
     } else {
       return "$" + amount.toFixed(NUM_DECIMALS);
     }
+  },
+
+  extend : function(defaults, options) {
+    var extended = {};
+    var prop;
+    for (prop in defaults) {
+      if (defaults.hasOwnProperty(prop)) {
+          extended[prop] = defaults[prop];
+      }
+    }
+    for (prop in options) {
+      if (options.hasOwnProperty(prop)) {
+        extended[prop] = options[prop];
+      }
+    }
+    return extended;
   }
 }

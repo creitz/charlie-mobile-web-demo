@@ -4,23 +4,47 @@ import { TransactionLoader } from '../services/transaction-loader.js';
 import { Utils } from "../util/utils";
 
 var searchDelayTimer;
-var lastSearch;
 var selectedTransaction = new ReactiveVar();
+var selectedCategory    = new ReactiveVar();
 var searchText = new ReactiveVar("");
+var searchMin  = new ReactiveVar(0);
+var searchMax  = new ReactiveVar(0);
 var loader;
-
-function load() {
-  loader.load(searchText.get());
-}
 
 function search() {
   
-  var searchString = searchText.get();
-  if (lastSearch !== searchString) {
-    lastSearch = searchString;
-    loader.scrollManager.reset();
-    load()
+  loader.scrollManager.reset();
+  load();
+}
+
+function load() {
+  
+  var searchString = searchText.get() || "";
+  var min = searchMin.get() || 0;
+  var max = searchMax.get();
+
+  var params = {
+    "search_string" : searchString,
+    "amount_min"    : min,
   }
+
+  if (max > 0) {
+    params["amount_max"] = max;
+  }
+
+  var category = selectedCategory.get();
+  if (category) {
+    params["category"] = category;
+  }
+
+  loader.load(params)
+}
+
+function startSearchTimer() {
+  clearTimeout(searchDelayTimer);
+  searchDelayTimer = setTimeout(function() {
+    search();
+  }, 350);
 }
 
 function sumForDate(date) {
@@ -77,6 +101,27 @@ Template.transactions.helpers({
 
   selectedTransaction: function() {
     return selectedTransaction.get();
+  },
+
+  selectedCategory: function() {
+    return selectedCategory.get();
+  },
+
+  searchMin: function() {
+    var min = searchMin.get();
+    return min > 0 ? min : "";
+  },
+
+  searchMax: function() {
+    var max = searchMax.get();
+    return max > 0 ? max : "";
+  },
+
+  collapseFilters: function() {
+    return selectedCategory.get() != undefined
+        || searchMin.get() > 0
+        || searchMax.get() > 0
+        ? "" : "collapse";
   }
 });
 
@@ -85,14 +130,30 @@ Template.transactions.events({
   'keyup #transaction-search': function(event) {
     event.preventDefault();
     searchText.set($(event.currentTarget).val());
-    clearTimeout(searchDelayTimer);
-    searchDelayTimer = setTimeout(function() {
-      search();
-    }, 350);
+    startSearchTimer()
+  },
+
+  'keyup #minInput': function(event) {
+    event.preventDefault();
+    searchMin.set($(event.currentTarget).val());
+    startSearchTimer()
+  },
+
+  'keyup #maxInput': function(event) {
+    event.preventDefault();
+    searchMax.set($(event.currentTarget).val());
+    startSearchTimer();
   },
 
   'click #loadMore': function(event) {
+    event.preventDefault();
     load();
+  },
+
+  'click #removeCategory': function(event) {
+    event.preventDefault();
+    selectedCategory.set(null);
+    search();
   }
 
 });
@@ -116,8 +177,14 @@ Template.transaction.events({
 Template.transactionDetails.events({
 
   'click #back': function() {
-    $('#transaction-search').val(this.lastSearch);
     selectedTransaction.set(undefined);
+  },
+
+  'click #category': function(event) {
+    event.preventDefault();
+    selectedCategory.set(this.category);
+    selectedTransaction.set(undefined);
+    search();
   }
 
 })

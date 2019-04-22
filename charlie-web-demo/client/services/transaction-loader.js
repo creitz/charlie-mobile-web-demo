@@ -13,7 +13,7 @@ export function TransactionLoader() {
   var responseData   = new ReactiveVar(0);
   var loading        = new ReactiveVar(false);
 
-  this.load = function(searchString) {
+  this.load = function(options) {
 
     if (loading.get()) {
       return;
@@ -24,11 +24,10 @@ export function TransactionLoader() {
 
     var page = this.scrollManager.page;
     var limit = this.scrollManager.limit;
-    var params = {
-                  "search_string" : searchString || "",
+    var params = Utils.extend(options, {
                   "limit"         : limit,
                   "offset"        : this.scrollManager.getOffset()
-                  };
+                });
     TransactionService.getTransactions(DUMMY_USER_ID, params).then(function(newData) {
       loading.set(false);
       var data = responseData.get();
