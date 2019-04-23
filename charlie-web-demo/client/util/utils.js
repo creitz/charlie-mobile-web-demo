@@ -3,7 +3,7 @@ const NUM_DECIMALS = 2;
 
 export let Utils = {
 
-  organizeTxnsByDate : function (data) {
+  organizeTxnsByDate: function (data) {
 
     data.dateMap = {};
     data.transactionDates = [];
@@ -20,7 +20,7 @@ export let Utils = {
     });
   },
 
-  formatMoney : function (amount) {
+  formatMoney: function (amount) {
     if (amount == null) {
       return '';
     }
@@ -32,7 +32,7 @@ export let Utils = {
     }
   },
 
-  extend : function(defaults, options) {
+  extend: function(defaults, options) {
     var extended = {};
     var prop;
     for (prop in defaults) {
