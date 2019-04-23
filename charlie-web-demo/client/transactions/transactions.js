@@ -31,10 +31,8 @@ function hasSearchMax() {
 
 function load() {
   
-  var searchString = searchText.get() || "";
-
   var params = {
-    "search_string" : searchString
+    "search_string" : searchText.get() || ""
   }
 
   if (hasSearchMin()) {
@@ -135,7 +133,7 @@ Template.transactions.helpers({
   },
 
   collapseFilters: function() {
-    return selectedCategory.get() != undefined
+    return selectedCategory.get() != null
         || hasSearchMin()
         || hasSearchMax()
         ? "" : "collapse";
@@ -200,7 +198,7 @@ Template.transactionDetails.events({
   'click #category': function(event) {
     event.preventDefault();
     selectedCategory.set(this.category);
-    selectedTransaction.set(undefined);
+    selectedTransaction.set(null);
     search();
   }
 

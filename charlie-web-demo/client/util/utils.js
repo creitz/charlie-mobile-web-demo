@@ -1,5 +1,5 @@
 
-const NUM_DECIMALS = 2;
+const MONEY_DECIMALS = 2;
 
 export let Utils = {
 
@@ -26,9 +26,9 @@ export let Utils = {
     }
   
     if (amount < 0) {
-      return "-$" + (amount * -1).toFixed(NUM_DECIMALS);
+      return "-$" + (amount * -1).toFixed(MONEY_DECIMALS);
     } else {
-      return "$" + amount.toFixed(NUM_DECIMALS);
+      return "$" + amount.toFixed(MONEY_DECIMALS);
     }
   },
 

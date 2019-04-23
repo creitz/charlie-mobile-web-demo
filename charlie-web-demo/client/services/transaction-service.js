@@ -2,7 +2,6 @@
 export let TransactionService = {
 
   getTransactions: function(user_id, params) {
-    
     return new Promise(function(resolve, reject) {
       Meteor.call('getTransactions', user_id, params, function(error, result) {
           if (error) {
