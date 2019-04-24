@@ -6,13 +6,13 @@ import { Utils } from "../util/utils";
 var searchDelayTimer;
 var selectedTransaction = new ReactiveVar();
 var selectedCategory    = new ReactiveVar();
+var selectedAccount     = new ReactiveVar();
 var searchText = new ReactiveVar("");
 var searchMin  = new ReactiveVar();
 var searchMax  = new ReactiveVar();
 var loader;
 
 function search() {
-  
   loader.scrollManager.reset();
   load();
 }
@@ -52,6 +52,14 @@ function load() {
   var category = selectedCategory.get();
   if (category) {
     params["category"] = category;
+  }
+
+  var account = selectedAccount.get();
+  if (account) {
+    var accountId = parseInt(account.id);
+    if (accountId != NaN) {
+      params["account_id"] = accountId;
+    }
   }
 
   loader.load(params)
@@ -124,6 +132,10 @@ Template.transactions.helpers({
     return selectedCategory.get();
   },
 
+  selectedAccount: function() {
+    return selectedAccount.get()
+  },
+
   searchMin: function() {
     return searchMin.get();
   },
@@ -134,6 +146,7 @@ Template.transactions.helpers({
 
   collapseFilters: function() {
     return selectedCategory.get() != null
+        || selectedAccount.get() != null
         || hasSearchMin()
         || hasSearchMax()
         ? "" : "collapse";
@@ -169,6 +182,12 @@ Template.transactions.events({
     event.preventDefault();
     selectedCategory.set(null);
     search();
+  },
+
+  'click #removeAccount': function(event) {
+    event.preventDefault();
+    selectedAccount.set(null);
+    search();
   }
 
 });
@@ -198,6 +217,16 @@ Template.transactionDetails.events({
   'click #category': function(event) {
     event.preventDefault();
     selectedCategory.set(this.category);
+    selectedTransaction.set(null);
+    search();
+  },
+
+  'click #account': function(event) {
+    event.preventDefault();
+    selectedAccount.set({
+      id: this.account_number,
+      name: this.account_name
+    });
     selectedTransaction.set(null);
     search();
   }

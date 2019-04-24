@@ -28,30 +28,39 @@
           <tr>
             <td>
               <input type="number"
-                      id="minInput"
-                      placeholder="$ Min."
-                      value="{{searchMin}}"/>
+                     id="minInput"
+                     placeholder="$ Min."
+                     value="{{searchMin}}"/>
             </td>
-            <td>
-              {{#with selectedCategory}}
-                <div>
-                  <label class="label label-info">
-                    {{this}} <a href="" id="removeCategory" class="glyphicon glyphicon-remove"></a>
-                  </label>
-                </div>
-              {{/with}}
-            </td>
-          </tr>
-          <tr>
             <td>
               <input type="number"
                      id="maxInput"
                      placeholder="$ Max."
                      value="{{searchMax}}"/>
             </td>
-            <td>
-            </td>
           </tr>
+          {{#with selectedCategory}}
+            <tr>
+              <td colspan="2">
+                <div>
+                  <label class="label label-info">
+                    {{this}} <a href="" id="removeCategory" class="glyphicon glyphicon-remove"></a>
+                  </label>
+                </div>
+              </td>
+            </tr>
+          {{/with}}
+          {{#with selectedAccount}}
+            <tr>
+              <td colspan="2">
+                <div>
+                  <label class="label label-info">
+                    {{name}} <a href="" id="removeAccount" class="glyphicon glyphicon-remove"></a>
+                  </label>
+                </div>
+              </td>
+            </tr>
+          {{/with}}
         </table>
       </div>
       <div class="transactions">
